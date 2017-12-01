@@ -1,0 +1,80 @@
+{
+  "name": "material-remixer-remote-web",
+  "version": "1.0.0",
+  "description": "A hosted remote controller for a Remixer target app.",
+  "homepage": "https://github.com/material-foundation/material-remixer",
+  "author": "The Material Remixer Authors (see AUTHORS)",
+  "license": "Apache-2.0",
+  "keywords": [
+    "material",
+    "remixer",
+    "remote"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-foundation/material-remixer-remote-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/material-foundation/material-remixer-remote-web/issues/"
+  },
+  "scripts": {
+    "build:dev": "mkdirp build && cross-env RMX_ENV=development webpack --progress --colors",
+    "build:prod": "mkdirp build && cross-env RMX_ENV=production webpack -p --progress --colors",
+    "build": "npm-run-all --parallel build:dev build:prod",
+    "clean:build": "del-cli build/**",
+    "clean:pub": "del-cli public/**",
+    "clean": "npm-run-all --parallel clean:build clean:pub",
+    "copy": "copyFiles -f src/*.{html,css,svg,ico} build/*.* public",
+    "codecov": "cat coverage/*/lcov.info | codecov",
+    "deploy": "npm run dist && firebase deploy",
+    "dev": "npm run clean:build && npm run build && cross-env RMX_ENV=production webpack-dev-server",
+    "dist": "npm run clean && npm run build && npm run copy",
+    "lint:ts": "tslint --fix --force 'src/**/*.ts?(x)'",
+    "lint:css": "lesshint src/*.css",
+    "lint": "npm-run-all --parallel lint:*",
+    "test": "karma start",
+    "test:watch": "karma start --no-single-run"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.35",
+    "@types/lodash.throttle": "^4.1.1",
+    "@types/mocha": "^2.2.39",
+    "@types/react": "^15.0.20",
+    "@types/react-addons-test-utils": "^0.14.17",
+    "@types/react-dom": "^0.14.19",
+    "@types/tinycolor2": "^1.1.0",
+    "@types/uuid": "^2.0.29",
+    "chai": "^3.5.0",
+    "codecov.io": "^0.1.6",
+    "copyfiles": "^1.0.0",
+    "cross-env": "^3.1.3",
+    "css-loader": "^0.27.3",
+    "del-cli": "^0.2.0",
+    "firebase-tools": "^3.2.0",
+    "html-loader": "^0.4.4",
+    "istanbul-instrumenter-loader": "^2.0.0",
+    "karma": "^1.5.0",
+    "karma-chai": "^0.1.0",
+    "karma-coverage": "^1.1.1",
+    "karma-mocha": "^1.3.0",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-webpack": "^2.0.2",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.2",
+    "lesshint": "^3.1.1",
+    "mkdirp": "^0.5.1",
+    "mocha": "^3.2.0",
+    "npm-run-all": "^4.0.2",
+    "react-addons-test-utils": "^15.4.2",
+    "style-loader": "^0.16.1",
+    "ts-loader": "^2.0.3",
+    "tslint": "^4.0.2",
+    "tslint-react": "^2.5.0",
+    "typescript": "^2.1.6",
+    "webpack": "^2.3.2",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "dependencies": {
+    "material-remixer": "^1.0.0"
+  }
+}
