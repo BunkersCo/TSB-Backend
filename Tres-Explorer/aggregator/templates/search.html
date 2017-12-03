@@ -1,0 +1,133 @@
+{% extends './base.html' %}
+
+{% block css %}
+<style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 300px;
+      }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron">
+    <div class="container">
+        <div class="col-sm-3">
+            <a href="/search"><h1 class="text-info">Found</h1></a>
+{% for add in location %}
+    {{ add }}
+{% endfor %}
+            
+        </div>
+        <div class="col-sm-9">
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+<div class="col-sm-4">
+    <form action="/search">
+
+        <div class="row">
+<div class="form-group col-sm-4"><a class="btn btn-default" href="javascript:;" id="findme"><i class="fa fa-map-marker"></i> Find me </a></div>
+<div class="form-group col-sm-4"><input class="form-control" type="text" name="lat" id="latitude" placeholder="Latitude" value=""></div>
+<div class="form-group col-sm-4"><input class="form-control" type="text" name="lon" id="longitude" placeholder="Lonitude" value=""></div>
+        </div>
+
+<div class="form-group"><input class="form-control" type="text" name="dist" placeholder="Enter radius in miles"></div>
+- or -
+<br><br>
+<div class="form-group"><input class="form-control" type="text" name="address" placeholder="500 Grand St, NYC"></div>
+
+<div class="form-actions"><input type="submit" class="btn btn-info" value="Show Studios"></div>
+</form>
+</div>
+<div class="col-sm-8">
+<table class="table table-striped table-hover">
+
+  <tr><th>name</th><th>address</th><th>phone</th><th>city, state</th><th>zipcode</th></tr>
+{% for o in studios %}
+<tr>
+    <td style="cursor: pointer" onClick="set_center({ lat: parseFloat({{ o.latitude }}), lng: parseFloat({{ o.longitude }}) })">{{ o.name }}</td>
+    <td>{{ o.address }}</td>
+    <td>{{ o.phone }}</td>
+    <td>{{ o.city }}, {{ o.state }}</td>
+    <td>{{ o.zipcode }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+
+
+
+{% endblock %}
+
+{% block js_onready %}
+
+    // click to button
+    $('#marker_button').click(function(){
+        our_position = { lat: parseFloat($('#latitude').val()), lng: parseFloat($('#longitude').val()) };
+        drop_marker(our_position)
+    })
+
+    // click to find my position
+    $('#findme').click(function(){
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(setPosition);
+
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    })
+    
+    last = ''
+    {% for o in studios %}
+        last = { lat: parseFloat({{ o.latitude }}), lng: parseFloat({{ o.longitude }}) }
+        drop_marker(last,"{{ o.name }} ")
+    {% endfor %}
+    set_center(last)
+{% endblock %}
+
+{% block js %}
+<script>
+    function set_center(position) {
+        map.setCenter(position); // setCenter takes a LatLng object
+    }
+    function drop_marker(position,title) {
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: title || 'Marker'
+            })
+    }
+
+    function setPosition(position) {
+        $('#latitude').val(position.coords.latitude)
+        $('#longitude').val(position.coords.longitude)
+    }
+
+    var our_position = {}
+    var map;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 40.7150943, lng: -73.9830816 },
+            zoom: 14
+        });
+    }
+
+</script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkgoFxUkwf4sZcahnQmwcfSOw90S9X7JI&callback=initMap"
+    async defer></script>
+
+
+
+{% endblock %}
